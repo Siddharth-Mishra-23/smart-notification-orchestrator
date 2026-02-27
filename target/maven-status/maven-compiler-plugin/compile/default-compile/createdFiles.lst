@@ -1,7 +1,9 @@
 com/notification/orchestrator/dto/NotificationResponseDTO.class
 com/notification/orchestrator/dto/NotificationRequestDTO.class
 com/notification/orchestrator/dto/NotificationRequestDTO$NotificationRequestDTOBuilder.class
+com/notification/orchestrator/service/NotificationProcessor.class
 com/notification/orchestrator/entity/Notification.class
+com/notification/orchestrator/queue/NotificationConsumer.class
 com/notification/orchestrator/entity/Notification$NotificationBuilder.class
 com/notification/orchestrator/service/NotificationServiceImpl.class
 com/notification/orchestrator/SmartNotificationOrchestratorApplication.class
@@ -9,4 +11,6 @@ com/notification/orchestrator/controller/NotificationController.class
 com/notification/orchestrator/dto/NotificationResponseDTO$NotificationResponseDTOBuilder.class
 com/notification/orchestrator/entity/NotificationStatus.class
 com/notification/orchestrator/service/NotificationService.class
+com/notification/orchestrator/config/RabbitMQConfig.class
+com/notification/orchestrator/queue/NotificationPublisher.class
 com/notification/orchestrator/repository/NotificationRepository.class

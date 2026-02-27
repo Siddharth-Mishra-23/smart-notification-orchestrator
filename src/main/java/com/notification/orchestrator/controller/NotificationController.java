@@ -22,4 +22,9 @@ public class NotificationController {
 
         return notificationService.createNotification(request);
     }
+
+    @GetMapping("/{id}")
+    public NotificationResponseDTO getNotification(@PathVariable Long id) {
+    return notificationService.getNotificationById(id);
+    }
 }

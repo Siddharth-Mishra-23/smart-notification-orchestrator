@@ -8,6 +8,7 @@ import com.notification.orchestrator.dto.NotificationResponseDTO;
 import com.notification.orchestrator.entity.Notification;
 import com.notification.orchestrator.entity.NotificationStatus;
 import com.notification.orchestrator.repository.NotificationRepository;
+import com.notification.orchestrator.queue.NotificationPublisher;
 
 import java.time.LocalDateTime;
 
@@ -16,6 +17,8 @@ import java.time.LocalDateTime;
 public class NotificationServiceImpl implements NotificationService {
 
     private final NotificationRepository repository;
+    private final NotificationProcessor processor;
+    private final NotificationPublisher publisher;
 
     @Override
     public NotificationResponseDTO createNotification(NotificationRequestDTO request) {
@@ -31,6 +34,7 @@ public class NotificationServiceImpl implements NotificationService {
                 .build();
 
         Notification saved = repository.save(notification);
+        publisher.publish(saved.getId());
 
         return NotificationResponseDTO.builder()
                 .id(saved.getId())
@@ -40,6 +44,22 @@ public class NotificationServiceImpl implements NotificationService {
                 .status(saved.getStatus())
                 .retryCount(saved.getRetryCount())
                 .createdAt(saved.getCreatedAt())
+                .build();
+    }
+
+    @Override
+    public NotificationResponseDTO getNotificationById(Long id) {
+        Notification notification = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Notification not found"));
+
+        return NotificationResponseDTO.builder()
+                .id(notification.getId())
+                .channel(notification.getChannel())
+                .recipient(notification.getRecipient())
+                .templateId(notification.getTemplateId())
+                .status(notification.getStatus())
+                .retryCount(notification.getRetryCount())
+                .createdAt(notification.getCreatedAt())
                 .build();
     }
 }
