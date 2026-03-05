@@ -24,7 +24,6 @@ public class NotificationProcessor {
     private final NotificationRepository repository;
 
     public void processNotification(Notification notification) {
-
         try {
             Thread.sleep(3000); 
         } catch (InterruptedException e) {

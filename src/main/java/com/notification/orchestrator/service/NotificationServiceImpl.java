@@ -3,12 +3,15 @@ package com.notification.orchestrator.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import com.notification.orchestrator.exception.SystemOverloadedException;
 import com.notification.orchestrator.dto.NotificationRequestDTO;
 import com.notification.orchestrator.dto.NotificationResponseDTO;
 import com.notification.orchestrator.entity.Notification;
 import com.notification.orchestrator.entity.NotificationStatus;
 import com.notification.orchestrator.repository.NotificationRepository;
 import com.notification.orchestrator.queue.NotificationPublisher;
+import org.springframework.amqp.core.AmqpAdmin;
+import org.springframework.amqp.core.QueueInformation;
 
 import java.time.LocalDateTime;
 
@@ -19,6 +22,7 @@ public class NotificationServiceImpl implements NotificationService {
     private final NotificationRepository repository;
     private final NotificationProcessor processor;
     private final NotificationPublisher publisher;
+    private final AmqpAdmin amqpAdmin;
 
     @Override
     public NotificationResponseDTO createNotification(NotificationRequestDTO request) {
@@ -34,6 +38,12 @@ public class NotificationServiceImpl implements NotificationService {
                 .build();
 
         Notification saved = repository.save(notification);
+
+        QueueInformation queueInfo = amqpAdmin.getQueueInfo("notification.queue");
+        if (queueInfo != null && queueInfo.getMessageCount() > 10) {
+        throw new SystemOverloadedException("System overloaded. Please retry later.");
+        }
+
         publisher.publish(saved.getId());
 
         return NotificationResponseDTO.builder()
